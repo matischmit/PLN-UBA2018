@@ -26,7 +26,7 @@ class NGramGenerator(object):
             self._probs[prev_tokens][token] = probability
 
         # sort in descending order for efficient sampling
-        self._sorted_probs = sorted_probs = {}
+        self._sorted_probs = {}
         for token_probs in self._probs:
             self._sorted_probs[token_probs] = sorted(self._probs[token_probs].items())
 
@@ -36,10 +36,13 @@ class NGramGenerator(object):
 
         sent = []
         prev_tokens = ['<s>'] * (n - 1)
-        token = self.generate_token(tuple(prev_tokens))
-        #while token != '</s>':
-            # WORK HERE!!
 
+        token = self.generate_token(tuple(prev_tokens))
+        while token != '</s>':
+            sent.append(token)              #agrego nuevo
+            prev_tokens.append(token)       #agrego el nuevo a los ya consumidos
+            prev_tokens = prev_tokens[1:]    #para mantener el tamaño del ngrama descarto el primero
+            token = self.generate_token(tuple(prev_tokens)) #recalculo nueva palabra
         return sent
 
     def generate_token(self, prev_tokens=None):
@@ -54,6 +57,13 @@ class NGramGenerator(object):
 
         r = random.random()
         probs = self._sorted_probs[prev_tokens]
-        # WORK HERE!!
+
+        i = 0
+        token, prob = probs[0]
+        acum = prob
+        while r > acum:
+            i += 1
+            token, prob = probs[i]
+            acum += prob
 
         return token
