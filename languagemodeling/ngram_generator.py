@@ -9,17 +9,26 @@ class NGramGenerator(object):
         model -- n-gram model.
         """
         self._n = model._n
-        n = self._n
-        # compute the probabilities
-        probs = defaultdict(dict)
-        # WORK HERE!!
+        self._probs = defaultdict(dict)
 
-        self._probs = dict(probs)
+        tokens = list(model._count.keys())
+        ngrams = list(filter(lambda i: len(i) is self._n, tokens))
 
-        #tokens =  model._count.keys()
-        #for token in tokens:
-        ngrams = model._count.keys()
+        for tokens in ngrams:
 
+            token = tokens[-1]
+            prev_tokens = tokens[:-1]
+            probability = model.cond_prob(token, list(prev_tokens))
+
+            if prev_tokens not in self._probs:
+                self._probs[prev_tokens] = dict()
+
+            self._probs[prev_tokens][token] = probability
+
+        # sort in descending order for efficient sampling
+        self._sorted_probs = sorted_probs = {}
+        for token_probs in self._probs:
+            self._sorted_probs[token_probs] = sorted(self._probs[token_probs].items())
 
     def generate_sent(self):
         """Randomly generate a sentence."""

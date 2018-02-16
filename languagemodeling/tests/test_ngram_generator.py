@@ -59,7 +59,8 @@ class TestNGramGenerator(TestCase):
             ('gata',): [('come', 1.0)],
             ('salmón',): [('.', 1.0)],
         }
-
+        print(generator._probs)
+        print(generator._sorted_probs)
         self.assertEqual(generator._probs, probs)
         self.assertEqual(generator._sorted_probs, sorted_probs)
 
