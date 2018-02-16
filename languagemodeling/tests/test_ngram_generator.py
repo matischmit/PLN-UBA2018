@@ -30,7 +30,7 @@ class TestNGramGenerator(TestCase):
                 'salmón': 1 / 12.0,
             }
         }
-
+        print(generator._probs)
         self.assertEqual(generator._probs, probs)
 
     def test_init_2gram(self):

@@ -13,13 +13,26 @@ Options:
   -o <file>     Output model file.
   -h --help     Show this screen.
 """
+pattern = r'''(?x)    # set flag to allow verbose regexps
+   (?:\d{1,3}(?:\.\d{3})+)  # numbers with '.' in the middle
+   | (?:[Ss]r\.|[Ss]ra\.|art\.)  # common spanish abbreviations
+   | (?:[A-Z]\.)+        # abbreviations, e.g. U.S.A.
+   | \w+(?:-\w+)*        # words with optional internal hyphens
+   | \$?\d+(?:\.\d+)?%?  # currency and percentages, e.g. $12.40, 82%
+   | \.\.\.            # ellipsis
+   | [][.,;"'?():-_`]  # these are separate tokens; includes ], [
+'''
+
+
 from docopt import docopt
 import pickle
 
-from nltk.corpus import gutenberg
+from nltk.corpus import PlaintextCorpusReader
+from nltk.tokenize import RegexpTokenizer
+tokenizer = RegexpTokenizer(pattern)
+
 
 from languagemodeling.ngram import NGram
-# from languagemodeling.ngram import NGram, AddOneNGram, InterpolatedNGram
 
 
 # models = {
@@ -32,17 +45,14 @@ from languagemodeling.ngram import NGram
 if __name__ == '__main__':
     opts = docopt(__doc__)
 
-    # load the data
-    # WORK HERE!! LOAD YOUR TRAINING CORPUS
-    sents = gutenberg.sents(['austen-emma.txt', 'austen-sense.txt'])
-
-    # train the model
+    corpusReader = PlaintextCorpusReader(".", "southpark.txt", word_tokenizer=tokenizer)
+    sents = corpusReader.sents()
     n = int(opts['-n'])
     model = NGram(n, sents)
-    # model_class = models[opts['-m']]
-    # model = model_class(n, sents)
 
-    # save it
+    #model_class = models[opts['-m']]
+    #model = model_class(n, sents)
+
     filename = opts['-o']
     f = open(filename, 'wb')
     pickle.dump(model, f)

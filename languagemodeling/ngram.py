@@ -50,7 +50,11 @@ class NGram(LanguageModel):
 
         count = defaultdict(int)
 
-        # WORK HERE!!
+        for sent in sents:
+            self.stopAndStartSymbols(sent)
+
+        for sent in sents:
+            self.countFromNgram(count, n, sent)
 
         self._count = dict(count)
 
@@ -67,14 +71,48 @@ class NGram(LanguageModel):
         token -- the token.
         prev_tokens -- the previous n-1 tokens (optional only if n = 1).
         """
-        # WORK HERE!!
+        if (token,) not in self._count.keys():
+            return 0.0
+
+        #P(t| prev_t) ~ #P(the|its water is so transparent that) = C(its water is so transparent that the) / C(its water is so transparent that)
+        if prev_tokens is None:
+            return self._count.get((token,),0) / self._count.get(())
+
+        if type(prev_tokens) is list:
+            prev_tokens = tuple(prev_tokens)
+
+        tokens = prev_tokens + (token,)
+
+        if tokens is not tuple or prev_tokens is not tuple:
+            tokens = tuple(tokens)
+            prev_tokens = tuple(prev_tokens)
+
+
+        if self.count(prev_tokens) is 0:
+            return -math.inf
+        else:
+            return self.count(tokens) / self.count(prev_tokens)
 
     def sent_prob(self, sent):
         """Probability of a sentence. Warning: subject to underflow problems.
 
         sent -- the sentence as a list of tokens.
         """
-        # WORK HERE!!
+        self.stopAndStartSymbols(sent)
+
+        prob = 1
+        for i in range(len(sent) - self._n + 1):
+            ngram = sent[i:i+self._n]
+            if self._n > 1:
+                sent_prob = self.cond_prob(ngram[self._n - 1], ngram[0:self._n - 1])
+                if sent_prob != -math.inf:
+                    prob *= sent_prob
+                else:
+                    return 0
+            else:
+                prob *= self.cond_prob(ngram[self._n - 1])
+
+        return prob
 
     def sent_log_prob(self, sent):
         """Log-probability of a sentence.
@@ -82,3 +120,25 @@ class NGram(LanguageModel):
         sent -- the sentence as a list of tokens.
         """
         # WORK HERE!!
+        self.stopAndStartSymbols(sent)
+
+        prob = 0
+        for i in range(len(sent) - self._n + 1):
+            ngram = sent[i:i+self._n]
+            sent_prob = self.cond_prob(ngram[self._n - 1], ngram[0:self._n - 1])
+            if sent_prob != 0:
+                prob += math.log(sent_prob, 2)
+            else:
+                return -math.inf
+        return prob
+
+    def countFromNgram(self, count, n, sent):
+        for i in range(len(sent)):
+            ngram, ngramminus = tuple(sent[i:i+n]), tuple(sent[i:i+n-1])
+            count[ngram] += 1
+            count[ngramminus] += 1
+
+    def stopAndStartSymbols(self, sent):
+        sent.append('</s>')
+        for i in range(self._n - 1):
+            sent.insert(0, '<s>')
