@@ -33,13 +33,13 @@ tokenizer = RegexpTokenizer(pattern)
 
 
 from languagemodeling.ngram import NGram
+from languagemodeling.ngramaddone import AddOneNGram
 
-
-# models = {
-#     'ngram': NGram,
-#     'addone': AddOneNGram,
+models = {
+     'ngram': NGram,
+     'addone': AddOneNGram,
 #     'inter': InterpolatedNGram,
-# }
+}
 
 
 if __name__ == '__main__':
@@ -48,10 +48,10 @@ if __name__ == '__main__':
     corpusReader = PlaintextCorpusReader(".", "southpark.txt", word_tokenizer=tokenizer)
     sents = corpusReader.sents()
     n = int(opts['-n'])
-    model = NGram(n, sents)
+    #model = NGram(n, sents)
 
-    #model_class = models[opts['-m']]
-    #model = model_class(n, sents)
+    model_class = models[opts['-m']]
+    model = model_class(n, sents)
 
     filename = opts['-o']
     f = open(filename, 'wb')

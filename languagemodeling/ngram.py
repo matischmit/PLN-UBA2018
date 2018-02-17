@@ -71,15 +71,15 @@ class NGram(LanguageModel):
         token -- the token.
         prev_tokens -- the previous n-1 tokens (optional only if n = 1).
         """
-        if (token,) not in self._count.keys():
-            return 0.0
+        #if (token,) not in self._count.keys():
+        #    return 0.0
 
         #P(t| prev_t) ~ #P(the|its water is so transparent that) = C(its water is so transparent that the) / C(its water is so transparent that)
         if prev_tokens is None:
-            return self._count.get((token,),0) / self._count.get(())
-
-        if type(prev_tokens) is list:
-            prev_tokens = tuple(prev_tokens)
+            prev_tokens = ()
+        else:
+            if type(prev_tokens) is list:
+                prev_tokens = tuple(prev_tokens)
 
         tokens = prev_tokens + (token,)
 
@@ -142,3 +142,11 @@ class NGram(LanguageModel):
         sent.append('</s>')
         for i in range(self._n - 1):
             sent.insert(0, '<s>')
+
+#import math
+#from languagemodeling.ngram import NGram
+
+class InterpolatedNGram(NGram):
+
+    def __init__(self, n, sents, gamma=None, addone=True):
+        super().__init__(n,sents)

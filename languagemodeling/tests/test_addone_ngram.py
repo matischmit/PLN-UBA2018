@@ -1,7 +1,7 @@
 # https://docs.python.org/3/library/unittest.html
 from unittest import TestCase
 
-from languagemodeling.ngram import AddOneNGram
+from languagemodeling.ngramaddone import AddOneNGram
 
 
 class TestAddOneNGram(TestCase):
