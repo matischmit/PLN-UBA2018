@@ -1,6 +1,7 @@
 import math
 import random
 from languagemodeling.ngram import NGram
+from languagemodeling.ngramaddone import AddOneNGram
 
 class InterpolatedNGram(NGram):
 
@@ -16,15 +17,12 @@ class InterpolatedNGram(NGram):
 
         models = []
         for i in range(1, n + 1):
-            models.append(NGram(i, sents))
+            if addone:
+                models.append(AddOneNGram(i, sents))
+            else:
+                models.append(NGram(i, sents))
 
         self._ngram_models = models
-
-        # if is_addone:
-        #     models.append(AddOneNGram(1, sents))
-        # else:
-        #     models.append(NGram(1, sents))
-
         super().__init__(n, sents)
 
 
