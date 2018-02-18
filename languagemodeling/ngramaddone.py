@@ -6,7 +6,7 @@ class AddOneNGram(NGram):
     def __init__(self, n, sents):
         super().__init__(n,sents)
 
-        elements = []  #self.getSizeOfAlphabet(sents)
+        elements = []
         for sent in sents:
             elementsInSent = [token for token in sent if token not in elements ]
             elements += elementsInSent

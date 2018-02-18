@@ -12,7 +12,7 @@ class NGramGenerator(object):
         self._probs = defaultdict(dict)
 
         tokens = list(model._count.keys())
-        ngrams = list(filter(lambda i: len(i) is self._n, tokens))
+        ngrams = list(filter(lambda i: len(i) is self._n, tokens)) #uso solo tokens del tamaño del ngrama
 
         for tokens in ngrams:
 

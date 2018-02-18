@@ -1,7 +1,7 @@
 # https://docs.python.org/3/library/unittest.html
 from unittest import TestCase
 
-from languagemodeling.ngram import InterpolatedNGram
+from languagemodeling.ngraminterpolate import InterpolatedNGram
 
 
 class TestInterpolatedNGram(TestCase):
@@ -34,13 +34,13 @@ class TestInterpolatedNGram(TestCase):
         ngram = InterpolatedNGram(2, self.sents, gamma=1.0)
 
         counts = {
-            (): 12,
+            #(): 12,
             ('el',): 1,
             ('gato',): 1,
             ('come',): 2,
             ('pescado',): 1,
             ('.',): 2,
-            ('</s>',): 2,
+            ('</s>',): 6,
             ('la',): 1,
             ('gata',): 1,
             ('salmón',): 1,
