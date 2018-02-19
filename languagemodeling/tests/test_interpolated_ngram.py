@@ -34,13 +34,13 @@ class TestInterpolatedNGram(TestCase):
         ngram = InterpolatedNGram(2, self.sents, gamma=1.0)
 
         counts = {
-            #(): 12,
+            (): 12,
             ('el',): 1,
             ('gato',): 1,
             ('come',): 2,
             ('pescado',): 1,
             ('.',): 2,
-            ('</s>',): 6,
+            ('</s>',): 2,
             ('la',): 1,
             ('gata',): 1,
             ('salmón',): 1,

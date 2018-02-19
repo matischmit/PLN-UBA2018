@@ -1,38 +1,45 @@
 import math
+import copy
 import random
 from languagemodeling.ngram import NGram
 from languagemodeling.ngramaddone import AddOneNGram
 
 class InterpolatedNGram(NGram):
 
-    def __init__(self, n, sents, gamma=None, addone=True):
+    def __init__(self, n, sents, gamma=None, addone=False):
 
+        self._n = n
         self._gamma = gamma
+        development_data = []
         if gamma is None:
             len_held_out = int(0.1 * len(sents))
-            development_data = sents[-len_held_out]
-            sents = sents[0:len_held_out+1]
-            self.gamma = self.gammaFromHeldOut(development_data)
-
+            development_data = sents[-len_held_out+1]
+            sents = sents[0:len_held_out + 1]
 
         models = []
         for i in range(1, n + 1):
             if addone:
-                models.append(AddOneNGram(i, sents))
+                models.append(AddOneNGram(i, copy.deepcopy(sents)))
             else:
-                models.append(NGram(i, sents))
+                models.append(NGram(i, copy.deepcopy(sents)))
 
         self._ngram_models = models
+
+        if gamma is None:
+            self._gamma = self.gammaFromHeldOut(development_data)
+
         super().__init__(n, sents)
 
-
+    def count(self, tokens):
+        ngramsize = len(tokens)
+        if ngramsize == 0:
+            ngramsize = 1
+        return self._ngram_models[ngramsize-1].count(tokens)
 
     def gammaFromHeldOut(self, data):
+
         #TODO
         return 1
-
-    def count(self, tokens):
-        return self._ngram_models[self._n-1].count(tokens)
 
     def cond_prob(self, token, prev_tokens=None):
         cond_ml = []        # maximum likelihood estimators
