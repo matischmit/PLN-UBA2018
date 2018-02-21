@@ -72,7 +72,6 @@ class NGram(LanguageModel):
         prev_tokens -- the previous n-1 tokens (optional only if n = 1).
         """
 
-        #P(t| prev_t) ~ #P(the|its water is so transparent that) = C(its water is so transparent that the) / C(its water is so transparent that)
         if prev_tokens is None:
             prev_tokens = ()
         else:
@@ -87,7 +86,7 @@ class NGram(LanguageModel):
 
 
         if self.count(prev_tokens) is 0:
-            return -math.inf
+            return 0
         else:
             return self.count(tokens) / self.count(prev_tokens)
 

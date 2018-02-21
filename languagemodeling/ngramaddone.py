@@ -36,6 +36,6 @@ class AddOneNGram(NGram):
 
 
         if self.count(prev_tokens) is 0:
-            return -math.inf
+            return 0
         else:
             return (self.count(tokens) + 1) / (self.count(prev_tokens) + self.V())

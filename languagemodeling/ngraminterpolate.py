@@ -50,14 +50,14 @@ class InterpolatedNGram(NGram):
             else:
                 prev_tokens_per_ngram = prev_tokens
 
-            cond_prob = self._ngram_models[self._n -i-1].cond_prob(token, prev_tokens_per_ngram)  #para cada modelo de ngramas calculo la condicional
-            if cond_prob == -math.inf:
-                cond_prob = 0
-            cond_ml.append(cond_prob)
+            c_prob = self._ngram_models[self._n-i-1].cond_prob(token, prev_tokens_per_ngram)  #para cada modelo de ngramas calculo la condicional
+            if c_prob == -math.inf:
+                c_prob = 0
+            cond_ml.append(c_prob)
 
-            current_lambda = (1 - sum(lambdas)) * self._ngram_models[self._n -(i+1)].count(prev_tokens[i:]) / (self._ngram_models[self._n -(i+1)].count(prev_tokens[i:]) + self._gamma)
+
+            current_lambda = (1 - sum(lambdas)) * self._ngram_models[self._n -(i+1)].count(tuple(prev_tokens[i:])) / (self._ngram_models[self._n -(i+1)].count(tuple(prev_tokens[i:])) + self._gamma)
             lambdas.append(current_lambda)
-
         cond_ml.append(self._ngram_models[0].cond_prob(token))
         lambdas.append(1 - sum(lambdas))
 

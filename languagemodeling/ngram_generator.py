@@ -10,10 +10,8 @@ class NGramGenerator(object):
         """
         self._n = model._n
         self._probs = defaultdict(dict)
-
         tokens = list(model._count.keys())
         ngrams = list(filter(lambda i: len(i) is self._n, tokens)) #uso solo tokens del tamaño del ngrama
-
         for tokens in ngrams:
 
             token = tokens[-1]
@@ -25,7 +23,6 @@ class NGramGenerator(object):
 
             self._probs[prev_tokens][token] = probability
 
-        # sort in descending order for efficient sampling
         self._sorted_probs = {}
         for token_probs in self._probs:
             self._sorted_probs[token_probs] = sorted(self._probs[token_probs].items())
@@ -61,7 +58,7 @@ class NGramGenerator(object):
         i = 0
         token, prob = probs[0]
         acum = prob
-        while r > acum:
+        while r > acum and i < len(probs) - 1:
             i += 1
             token, prob = probs[i]
             acum += prob

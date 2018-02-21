@@ -29,26 +29,25 @@ import pickle
 
 from nltk.corpus import PlaintextCorpusReader
 from nltk.tokenize import RegexpTokenizer
-tokenizer = RegexpTokenizer(pattern)
 
 
 from languagemodeling.ngram import NGram
 from languagemodeling.ngramaddone import AddOneNGram
+from languagemodeling.ngraminterpolate import InterpolatedNGram
 
 models = {
      'ngram': NGram,
      'addone': AddOneNGram,
-#     'inter': InterpolatedNGram,
+     'inter': InterpolatedNGram,
 }
 
 
 if __name__ == '__main__':
     opts = docopt(__doc__)
-
-    corpusReader = PlaintextCorpusReader(".", "southpark.txt", word_tokenizer=tokenizer)
+    tokenizer = RegexpTokenizer(pattern)
+    corpusReader = PlaintextCorpusReader(".", "got.txt", word_tokenizer=tokenizer)
     sents = corpusReader.sents()
     n = int(opts['-n'])
-    #model = NGram(n, sents)
 
     model_class = models[opts['-m']]
     model = model_class(n, sents)
